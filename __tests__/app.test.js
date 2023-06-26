@@ -33,15 +33,47 @@ describe("get /api", () => {
             .then(({ body }) => {
                 expect(typeof body.apiDoc === "object").toBeTruthy();
                 expect(typeof body.apiDoc).not.toBeNull();
-                expect(body.apiDoc).toHaveProperty("GET /api");
-                expect(body.apiDoc).toHaveProperty("GET /api/topics");
-                expect(body.apiDoc).toHaveProperty("GET /api/articles");
+                expect(body.apiDoc).hasOwnProperty("GET /api");
+                expect(body.apiDoc).hasOwnProperty("GET /api/topics");
+                expect(body.apiDoc).hasOwnProperty("GET /api/articles");
+                expect(body.apiDoc).hasOwnProperty("GET /api/articles/:article_id");
                 for (let i in body.apiDoc) {
-                    expect(body.apiDoc[i]).toHaveProperty("description");
+                    expect(body.apiDoc[i]).hasOwnProperty("description");
                 };
             });
     });
 });
+
+describe("get /api/articles", () => {
+    test("returns an article object by id with appropriate content keys", () => {
+        const articleProps = ["author",
+            "title",
+            "article_id",
+            "body",
+            "topic",
+            "created_at",
+            "votes",
+            "article_img_url"]
+        return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then(({ body }) => {
+                articleProps.forEach(prop => {
+                    expect(body.article).hasOwnProperty(prop);
+                })
+            });
+    });
+    test("returns a status 404 error message when an inavlid article id is searched", () => {
+        return request(app)
+            .get("/api/articles/1528")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe('Article does not exist!')
+            });
+    });
+});
+
+
 
 
 

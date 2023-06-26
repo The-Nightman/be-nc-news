@@ -1,4 +1,4 @@
-const { fetchTopics } = require("../models/model.js")
+const { fetchTopics, fetchArticles } = require("../models/model.js")
 const fs = require("fs/promises")
 
 exports.endpoints = (req, res, next) => {
@@ -17,6 +17,16 @@ exports.endpoints = (req, res, next) => {
 exports.getTopics = (req, res, next) => {
     fetchTopics().then((topics) => {
         res.status(200).send({ topics })
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+exports.getArticles = (req, res, next) => {
+    const { article_id } = req.params
+    fetchArticles(article_id).then((article) => {
+        res.status(200).send({ article })
     })
     .catch((err) => {
         next(err)
