@@ -16,7 +16,8 @@ describe("get /api/topics", () => {
             .then(({ body }) => {
                 expect(Array.isArray(body.topics)).toBeTruthy();
                 body.topics.forEach(item => {
-                    expect(typeof item === "object" && typeof item !== null).toBeTruthy();
+                    expect(typeof item === "object").toBeTruthy();
+                    expect(typeof item).not.toBeNull();
                     expect(item.hasOwnProperty("slug")).toBeTruthy();
                     expect(item.hasOwnProperty("description")).toBeTruthy();
                 });
@@ -24,6 +25,23 @@ describe("get /api/topics", () => {
     });
 });
 
+describe("get /api", () => {
+    test("returns an object containing a list of available endpoints with descriptions", () => {
+        return request(app)
+            .get("/api")
+            .expect(200)
+            .then(({ body }) => {
+                expect(typeof body.apiDoc === "object").toBeTruthy();
+                expect(typeof body.apiDoc).not.toBeNull();
+                expect(body.apiDoc).toHaveProperty("GET /api");
+                expect(body.apiDoc).toHaveProperty("GET /api/topics");
+                expect(body.apiDoc).toHaveProperty("GET /api/articles");
+                for (let i in body.apiDoc) {
+                    expect(body.apiDoc[i]).toHaveProperty("description");
+                };
+            });
+    });
+});
 
 
 
