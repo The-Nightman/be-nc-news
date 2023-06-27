@@ -44,7 +44,7 @@ describe("get /api", () => {
     });
 });
 
-describe("get /api/articles", () => {
+describe("get /api/articles/:article_id", () => {
     test("returns an article object by id with appropriate content keys", () => {
         const articleProps = ["author",
             "title",
