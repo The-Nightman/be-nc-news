@@ -83,8 +83,28 @@ describe("get /api/articles/:article_id", () => {
     });
 });
 
-
-
+describe("get /api/articles/:article_id/comments", () => {
+    test("returns an article object by id with appropriate content keys", () => {
+        const commentProps = ["comment_id",
+            "votes",
+            "created_at",
+            "author",
+            "body",
+            "article_id"]
+        return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body }) => {
+                expect(Array.isArray(body.comments)).toBeTruthy();
+                body.comments.forEach(comment => {
+                    commentProps.forEach(prop => {
+                        expect(comment).hasOwnProperty(prop);
+                    })
+                    expect(comment.article_id).toBe(1);
+                })
+            });
+    });
+});
 
 
 afterAll(() => db.end());
