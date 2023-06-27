@@ -16,7 +16,7 @@ exports.fetchArticles = (id) => {
             if (articleData.rows.length !== 1) {
                 return Promise.reject({ status: 404, message: 'Article does not exist!' })
             }
-            return articleData.rows
+            return articleData.rows[0]
         })
     }
 }

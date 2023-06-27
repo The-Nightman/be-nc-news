@@ -4,6 +4,7 @@ const testData = require("../db/data/test-data/index");
 const db = require("../db/connection");
 const app = require("../app")
 
+
 beforeEach(() => {
     return seed(testData);
 });
@@ -48,7 +49,6 @@ describe("get /api/articles/:article_id", () => {
     test("returns an article object by id with appropriate content keys", () => {
         const articleProps = ["author",
             "title",
-            "article_id",
             "body",
             "topic",
             "created_at",
@@ -58,17 +58,27 @@ describe("get /api/articles/:article_id", () => {
             .get("/api/articles/1")
             .expect(200)
             .then(({ body }) => {
+                expect(body.article).hasOwnProperty("article_id")
+                expect(body.article.article_id).toBe(1)
                 articleProps.forEach(prop => {
                     expect(body.article).hasOwnProperty(prop);
                 })
             });
     });
-    test("returns a status 404 error message when an inavlid article id is searched", () => {
+    test("returns a status 404 error message when a valid but non-existing article id is searched", () => {
         return request(app)
             .get("/api/articles/1528")
             .expect(404)
             .then(({ body }) => {
                 expect(body.message).toBe('Article does not exist!')
+            });
+    });
+    test("returns a status 400 error message when an inavlid search is performed", () => {
+        return request(app)
+            .get("/api/articles/bad")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('Bad request! Enter a valid ID')
             });
     });
 });
