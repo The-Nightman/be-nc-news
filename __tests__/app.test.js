@@ -15,7 +15,7 @@ describe("get /api/topics", () => {
             .get("/api/topics")
             .expect(200)
             .then(({ body }) => {
-                expect(body.topics.length).toBeGreaterThan(0);
+                expect(body.topics).toHaveLength(3);
                 body.topics.forEach(item => {
                     expect(typeof item === "object").toBeTruthy();
                     expect(typeof item).not.toBeNull();
@@ -89,7 +89,7 @@ describe("get /api/articles", () => {
             .get("/api/articles")
             .expect(200)
             .then(({ body }) => {
-                expect(body.articles.length).toBeGreaterThan(0);
+                expect(body.articles).toHaveLength(13);
                 body.articles.forEach(article => {
                     expect(typeof article.article_id).toBe('number');
                     expect(typeof article.title).toBe('string');

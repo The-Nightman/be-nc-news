@@ -22,16 +22,15 @@ exports.fetchArticleByID = (id) => {
 }
 
 exports.fetchArticles = () => {
-    return db.query(`SELECT articles.*, COUNT(*)::INT AS comment_count FROM articles
-        JOIN comments ON articles.article_id = comments.article_id
+    return db.query(`SELECT articles.author, articles.title, articles.article_id, articles.topic, 
+        articles.created_at, articles.votes, articles.article_img_url, 
+        COUNT(comments.article_id)::INT AS comment_count FROM articles
+        LEFT JOIN comments ON comments.article_id = articles.article_id
         GROUP BY articles.article_id ORDER BY articles.created_at DESC;`).then((data) => {
         if (data.rows.length === 0) {
             return Promise.reject({ status: 204, message: 'No Content!' })
         } else {
-            return data.rows.map(article => {
-                delete article.body
-                return article
-            })
+            return data.rows
         }
     });
 };
