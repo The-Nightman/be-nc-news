@@ -85,23 +85,27 @@ describe("get /api/articles/:article_id", () => {
 
 describe("get /api/articles/:article_id/comments", () => {
     test("returns an article object by id with appropriate content keys", () => {
-        const commentProps = ["comment_id",
-            "votes",
-            "created_at",
-            "author",
-            "body",
-            "article_id"]
         return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
             .then(({ body }) => {
-                expect(Array.isArray(body.comments)).toBeTruthy();
+                expect(body.comments.length).toBeGreaterThan(0);
                 body.comments.forEach(comment => {
-                    commentProps.forEach(prop => {
-                        expect(comment).hasOwnProperty(prop);
-                    })
                     expect(comment.article_id).toBe(1);
+                    expect(typeof comment.comment_id).toBe('number');
+                    expect(typeof comment.votes).toBe('number');
+                    expect(typeof comment.created_at).toBe('string');
+                    expect(typeof comment.author).toBe('string');
+                    expect(typeof comment.body).toBe('string');
                 })
+            });
+    });
+    test("returns a status 404 error message when a valid but non-existing article id is searched", () => {
+        return request(app)
+            .get("/api/articles/1252/comments")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe('Comments do not exist!');
             });
     });
 });
