@@ -15,7 +15,7 @@ describe("get /api/topics", () => {
             .get("/api/topics")
             .expect(200)
             .then(({ body }) => {
-                expect(Array.isArray(body.topics)).toBeTruthy();
+                expect(body.topics).toHaveLength(3);
                 body.topics.forEach(item => {
                     expect(typeof item === "object").toBeTruthy();
                     expect(typeof item).not.toBeNull();
@@ -83,6 +83,36 @@ describe("get /api/articles/:article_id", () => {
     });
 });
 
+describe("get /api/articles", () => {
+    test("return an array of article objects with the appropriate properties without a body property", () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toHaveLength(13);
+                body.articles.forEach(article => {
+                    expect(typeof article.article_id).toBe('number');
+                    expect(typeof article.title).toBe('string');
+                    expect(typeof article.topic).toBe('string');
+                    expect(typeof article.created_at).toBe('string');
+                    expect(typeof article.votes).toBe('number');
+                    expect(typeof article.article_img_url).toBe('string');
+                    expect(typeof article.comment_count).toBe('number');
+                    expect(article).not.hasOwnProperty('body');
+                });
+                
+            });
+    });
+    test("return an array of article objects sorted by date descending as default", () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy('created_at', {descending: true})
+            });
+    });
+});
+
 describe("get /api/articles/:article_id/comments", () => {
     test("returns an article object by id with appropriate content keys", () => {
         return request(app)
@@ -117,6 +147,5 @@ describe("get /api/articles/:article_id/comments", () => {
             });
     });
 });
-
 
 afterAll(() => db.end());
