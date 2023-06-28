@@ -89,7 +89,7 @@ describe("get /api/articles/:article_id/comments", () => {
             .get("/api/articles/1/comments")
             .expect(200)
             .then(({ body }) => {
-                expect(body.comments.length).toBeGreaterThan(0);
+                expect(body.comments).toHaveLength(11);
                 body.comments.forEach(comment => {
                     expect(comment.article_id).toBe(1);
                     expect(typeof comment.comment_id).toBe('number');
@@ -100,12 +100,20 @@ describe("get /api/articles/:article_id/comments", () => {
                 })
             });
     });
-    test("returns a status 404 error message when a valid but non-existing article id is searched", () => {
+    test("returns a status 404 error message when a valid article id without comments is searched", () => {
         return request(app)
-            .get("/api/articles/1252/comments")
+            .get("/api/articles/2/comments")
             .expect(404)
             .then(({ body }) => {
                 expect(body.message).toBe('Comments do not exist!');
+            });
+    });
+    test("returns a status 400 error message when an invalid search is performed", () => {
+        return request(app)
+            .get("/api/articles/bad/comments")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('Bad request! Enter a valid ID');
             });
     });
 });

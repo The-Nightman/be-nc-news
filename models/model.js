@@ -32,7 +32,6 @@ exports.fetchComments = (id) => {
             if (commentsData.rows.length === 0) {
                 return Promise.reject({ status: 404, message: 'Comments do not exist!' })
             }
-            console.log(commentsData.rows)
             return commentsData.rows
         })
     }
