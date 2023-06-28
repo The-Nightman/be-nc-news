@@ -18,10 +18,19 @@
           "title": "Seafood substitutions are increasing",
           "topic": "cooking",
           "author": "weegembump",
-          "body": "Text from the article..",
           "created_at": "2018-05-30T15:59:13.341Z",
           "votes": 0,
           "comment_count": 6
+        },
+        {
+          "article_id": 3, 
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          "author": "icellusedkars",
+          "comment_count": 2,
+          "created_at": "2020-11-03T09:12:00.000Z",
+          "title": "Eight pug gifs that remind me of mitch",
+          "topic": "mitch",
+          "votes": 0
         }
       ]
     }
