@@ -68,6 +68,9 @@ exports.postComments = (req, res, next) => {
         res.status(201).send({ comment })
     })
     .catch((err) => {
+        if (err.code === "23503") {
+            res.status(404).send({ message: 'Username does not exist!' })
+        }
         next(err)
     })
 }

@@ -44,6 +44,15 @@ exports.checkExists = (id) =>{
     })
 }
 
+exports.checkUserExists = (username) =>{
+    return db.query(`SELECT username FROM users WHERE username = $1;`, [username])
+    .then((userExists) => {
+        if (userExists.rows.length === 0) {
+            return Promise.reject({ status: 404, message: 'User does not exist!' })
+        }
+    })
+}
+
 exports.fetchComments = (id) => {
     if (!/^[^A-z]+$/.test(id)) {
         return Promise.reject({ status: 400, message: 'Bad request! Enter a valid ID' })
