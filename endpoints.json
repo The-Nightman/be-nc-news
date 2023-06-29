@@ -92,5 +92,21 @@
         }
       ]
     }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "updates the vote count via key inc_votes and returns articles by id",
+    "queries": [],
+    "exampleResponse": {
+      "article": [
+        {
+          "comment_id": 19,
+          "body": "test comment content",
+          "article_id": 1,
+          "author": "lurker",
+          "votes": 0,
+          "created_at": "2023-06-29T12:48:40.675Z"
+        }
+      ]
+    }
   }
 }
