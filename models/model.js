@@ -58,3 +58,25 @@ exports.fetchComments = (id) => {
     }
 }
 
+exports.sendNewComment = (id, newComment) => {
+    if (!/^[^A-z]+$/.test(id)) {
+        return Promise.reject({ status: 400, message: 'Bad request! Enter a valid ID' })
+    } else {
+        const { body, author } = newComment
+        if (!body) {
+            return Promise.reject({ status: 400, message: 'Comment text required!' })
+        }
+        if (!author) {
+            return Promise.reject({ status: 400, message: 'Author username required!' })
+        }
+        return db.query(`INSERT INTO comments
+            (article_id, body, author)
+            VALUES
+            ($1, $2, $3)
+            RETURNING *;`, 
+            [id, body, author])
+            .then((data) => {
+                return data.rows[0]
+            })
+    }
+}
