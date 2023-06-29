@@ -89,3 +89,25 @@ exports.sendNewComment = (id, newComment) => {
             })
     }
 }
+
+exports.updateArticleByID = (id, updateData) => {
+    if (!/^[^A-z]+$/.test(id)) {
+        return Promise.reject({ status: 400, message: 'Bad request! Enter a valid ID' })
+    } else {
+        if (!Object.keys(updateData).includes('inc_votes')) {
+            return Promise.reject({status: 400, message: 'Bad request! Enter a valid key'})
+        } 
+        const { inc_votes } = updateData
+        if (!/^[^A-z]+$/.test(inc_votes)) {
+            return Promise.reject({ status: 400, message: 'Bad request! Enter a valid update query' })
+        }
+        return db.query(`UPDATE articles
+        SET votes = votes + $1
+        WHERE article_id = $2
+        RETURNING *;`, 
+        [inc_votes, id])
+        .then((data) => {
+            return data.rows[0]
+        })
+    }
+}

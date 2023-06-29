@@ -157,7 +157,7 @@ describe("get /api/articles/:article_id/comments", () => {
 });
 
 
-describe("get /api/articles/:article_id/comments", () => {
+describe("post /api/articles/:article_id/comments", () => {
     test("posts and returns a new comment to the selected article", () => {
         const testComment = { body: "test comment content",
             author: "lurker" }
@@ -229,5 +229,92 @@ describe("get /api/articles/:article_id/comments", () => {
     });
 });
 
+describe("patch /api/articles/:article_id", () => {
+    test("updates the additive sum of the votes property of the chosen article by id", () => {
+        const test = { inc_votes : 1 }
+        return request(app)
+            .patch("/api/articles/1")
+            .send(test)
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.article.article_id).toBe(1);
+                expect(typeof body.article.title).toBe("string");
+                expect(typeof body.article.author).toBe("string");
+                expect(typeof body.article.body).toBe("string");
+                expect(typeof body.article.created_at).toBe("string");
+                expect(body.article.votes).toBe(101);
+            });
+    });
+    test("updates the subractive sum of the votes property of the chosen article by id", () => {
+        const test = { inc_votes : -7 }
+        return request(app)
+            .patch("/api/articles/1")
+            .send(test)
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.article.article_id).toBe(1);
+                expect(typeof body.article.title).toBe("string");
+                expect(typeof body.article.author).toBe("string");
+                expect(typeof body.article.body).toBe("string");
+                expect(typeof body.article.created_at).toBe("string");
+                expect(body.article.votes).toBe(93);
+            });
+    });
+    test("updates the article from valid keys while ignoring invalid keys", () => {
+        const test = { inc_votes : 1, invalid: "false" }
+        return request(app)
+            .patch("/api/articles/1")
+            .send(test)
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.article.article_id).toBe(1);
+                expect(typeof body.article.title).toBe("string");
+                expect(typeof body.article.author).toBe("string");
+                expect(typeof body.article.body).toBe("string");
+                expect(typeof body.article.created_at).toBe("string");
+                expect(body.article.votes).toBe(101);
+            });
+    });
+    test("returns an error 404 when a valid but non-existing article id is searched", () => {
+        const test = { inc_votes : 1 }
+        return request(app)
+            .patch("/api/articles/1232")
+            .send(test)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe('Article does not exist!');
+            });
+    });
+    test("returns an error 400 on attempt to update an article with an invalid key", () => {
+        const test = { comment_count : 1 }
+        return request(app)
+            .patch("/api/articles/1")
+            .send(test)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('Bad request! Enter a valid key');
+            });
+    });
+    test("returns an error 400 when an invalid search is performed", () => {
+        const test = { comment_count : 1 }
+        return request(app)
+            .patch("/api/articles/bad")
+            .send(test)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('Bad request! Enter a valid ID');
+            });
+    });
+    test("returns an error 400 when an invalid update query is passed with a valid key", () => {
+        const test = { inc_votes : "bad" }
+        return request(app)
+            .patch("/api/articles/1")
+            .send(test)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('Bad request! Enter a valid update query');
+            });
+    });
+});
 
 afterAll(() => db.end());
