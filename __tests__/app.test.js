@@ -130,12 +130,20 @@ describe("get /api/articles/:article_id/comments", () => {
                 })
             });
     });
-    test("returns a status 404 error message when a valid article id without comments is searched", () => {
+    test("returns an empty array when a valid article id without comments is searched", () => {
         return request(app)
             .get("/api/articles/2/comments")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.comments).toEqual([]);
+            });
+    });
+    test("returns a status 404 error message when a valid but non-existing article id is searched", () => {
+        return request(app)
+            .get("/api/articles/1635/comments")
             .expect(404)
             .then(({ body }) => {
-                expect(body.message).toBe('Comments do not exist!');
+                expect(body.message).toEqual('Article does not exist!');
             });
     });
     test("returns a status 400 error message when an invalid search is performed", () => {
