@@ -1,4 +1,5 @@
-const { fetchTopics, fetchArticles, fetchArticleByID, fetchComments, checkExists } = require("../models/model.js")
+const { fetchTopics, fetchArticles, fetchArticleByID, fetchComments, checkExists, 
+    sendNewComment } = require("../models/model.js")
 
 const fs = require("fs/promises")
 
@@ -55,3 +56,22 @@ exports.getComments = (req, res, next) => {
         next(err)
     })
 }
+
+exports.postComments = (req, res, next) => {
+    const { article_id } = req.params
+    const newComment = req.body
+    const existingArticle = checkExists(article_id)
+    const newCommentData = sendNewComment(article_id, newComment)
+    return Promise.all([existingArticle, newCommentData])
+    .then((commentPostResolve) => {
+        comment = commentPostResolve[1]
+        res.status(201).send({ comment })
+    })
+    .catch((err) => {
+        if (err.code === "23503") {
+            res.status(404).send({ message: 'Username does not exist!' })
+        }
+        next(err)
+    })
+}
+    
