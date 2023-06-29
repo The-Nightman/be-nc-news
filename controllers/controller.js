@@ -1,4 +1,5 @@
-const { fetchTopics, fetchArticles, fetchArticleByID } = require("../models/model.js")
+const { fetchTopics, fetchArticles, fetchArticleByID, fetchComments, checkExists } = require("../models/model.js")
+
 const fs = require("fs/promises")
 
 exports.endpoints = (req, res, next) => {
@@ -40,4 +41,17 @@ exports.getArticles = (req, res, next) => {
         .catch((err) => {
             next(err)
         })
+}
+
+exports.getComments = (req, res, next) => {
+    const { article_id } = req.params
+    const existingArticle = checkExists(article_id)
+    const commentsData = fetchComments(article_id)
+    return Promise.all([existingArticle, commentsData]).then((commentsResolve) => {
+        comments = commentsResolve[1]
+        res.status(200).send({ comments })
+    })
+    .catch((err) => {
+        next(err)
+    })
 }
