@@ -216,6 +216,17 @@ describe("get /api/articles/:article_id/comments", () => {
                 expect(body.message).toEqual('Bad request! Enter a valid ID');
             });
     });
+    test("returns an error 404 when an invalid username is entered", () => {
+        const testComment = { body: "test comment content",
+        author: "keenan" }
+        return request(app)
+            .post("/api/articles/1/comments")
+            .send(testComment)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toEqual('Username does not exist!');
+            });
+    });
 });
 
 
