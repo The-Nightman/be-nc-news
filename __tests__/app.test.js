@@ -422,7 +422,7 @@ describe("get /api/articles/?sortby=&order=&topic=", () => {
                 expect(body.message).toBe("Topic does not exist!");
             });
     });
-    test("return an error 404 when filtered for a valid topic without articles", () => {
+    test("return status 200 and an empty array when filtered for a valid topic without articles", () => {
         return request(app)
             .get("/api/articles/?topic=paper")
             .expect(200)
