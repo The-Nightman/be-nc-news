@@ -21,18 +21,31 @@ exports.fetchArticleByID = (id) => {
     }
 }
 
-exports.fetchArticles = () => {
-    return db.query(`SELECT articles.author, articles.title, articles.article_id, articles.topic, 
+exports.fetchArticles = (sort_by = `created_at`, order = `DESC`, topic) => {
+    const tableWhitelist = ["author", "title", "article_id", "topic", "created_at", "votes"]
+    const topicQuery = []
+    if (tableWhitelist.includes(sort_by) && /^(ASC)|(DESC)$/i.test(order)) {
+        let articleQuery = `SELECT articles.author, articles.title, articles.article_id, articles.topic, 
         articles.created_at, articles.votes, articles.article_img_url, 
         COUNT(comments.article_id)::INT AS comment_count FROM articles
-        LEFT JOIN comments ON comments.article_id = articles.article_id
-        GROUP BY articles.article_id ORDER BY articles.created_at DESC;`).then((data) => {
-        if (data.rows.length === 0) {
-            return Promise.reject({ status: 204, message: 'No Content!' })
-        } else {
-            return data.rows
+        LEFT JOIN comments ON comments.article_id = articles.article_id`
+        if (topic != null && topic != undefined) 
+        {
+            topicQuery.push(topic)
+            articleQuery += ` WHERE articles.topic = $1`
         }
-    });
+        articleQuery += ` GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order};`
+        return db.query(articleQuery, topicQuery)
+            .then((data) => {
+            if (data.rows.length === 0) {
+                return Promise.reject({ status: 204, message: 'No Content!' })
+            } else {
+                return data.rows
+            }
+        });
+    } else {
+        return Promise.reject({status: 400, message: `Bad request! Enter a valid query`})
+    }
 };
 
 exports.checkExists = (id) =>{
@@ -49,6 +62,15 @@ exports.checkCommentExists = (id) =>{
     .then((commentExists) => {
         if (commentExists.rows.length === 0) {
             return Promise.reject({ status: 404, message: 'Comment does not exist!' })
+        }
+    })
+}
+
+exports.checkTopicExists = (topic) =>{
+    return db.query(`SELECT slug FROM topics WHERE slug = $1;`, [topic])
+    .then((topicExists) => {
+        if (topicExists.rows.length === 0 && topic) {
+            return Promise.reject({ status: 404, message: 'Topic does not exist!' })
         }
     })
 }
@@ -126,4 +148,3 @@ exports.fetchUsers = () => {
         return data.rows
     })
 }
-
