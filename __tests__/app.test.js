@@ -376,4 +376,68 @@ describe("get /api/users", () => {
     });
 });
 
+describe("get /api/articles/?sortby=&order=&topic=", () => {
+    test("return an array of article objects sorted by date descending by default", () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toHaveLength(13);
+                expect(body.articles).toBeSortedBy("created_at", {descending: true})
+
+            });
+    });
+    test("return an array of article objects sorted by author ascending alphabetically", () => {
+        return request(app)
+            .get("/api/articles/?sort_by=author&order=asc")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy('author', { ascending: true })
+            });
+    });
+    test("return an array of article objects sorted by votes with descending default value", () => {
+        return request(app)
+            .get("/api/articles/?sort_by=votes")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy('votes', { descending: true })
+            });
+    });
+    test("return an array of article objects filtered by the chosen topic", () => {
+        return request(app)
+            .get("/api/articles/?topic=cats")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toHaveLength(1);
+                body.articles.forEach(article => {
+                    expect(article.topic).toBe("cats");
+                });
+            });
+    });
+    test("return an error 404 when filtered for an invalid topic", () => {
+        return request(app)
+            .get("/api/articles/?topic=bad")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe("Topic does not exist!");
+            });
+    });
+    test("return an error 400 when an invalid and non-whitelisted sort_by query is entered", () => {
+        return request(app)
+            .get("/api/articles/?sort_by=attack")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe("Bad request! Enter a valid query");
+            });
+    });
+    test("return an error 400 when an invalid and non-whitelisted order query is entered", () => {
+        return request(app)
+            .get("/api/articles/?sort_by=created_at&order=attack")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe("Bad request! Enter a valid query");
+            });
+    });
+});
+
 afterAll(() => db.end());
