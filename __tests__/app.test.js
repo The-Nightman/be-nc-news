@@ -64,7 +64,6 @@ describe("get /api/articles/:article_id", () => {
                 expect(typeof body.article.created_at).toBe("string");
                 expect(typeof body.article.votes).toBe("number");
                 expect(typeof body.article.article_img_url).toBe("string");
-                expect(typeof body.article.comment_count).toBe("number");
             });
     });
     test("returns a status 404 error message when a valid but non-existing article id is searched", () => {
@@ -441,6 +440,18 @@ describe("get /api/articles/?sortby=&order=&topic=", () => {
             .expect(400)
             .then(({ body }) => {
                 expect(body.message).toBe("Bad request! Enter a valid query");
+            });
+    });
+});
+
+describe("get /api/articles/:article_id comment_count", () => {
+    test("returns an article object by id with a comment_count property and the apropriate value", () => {
+        return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.article.article_id).toBe(1)
+                expect(body.article.comment_count).toBe(11);
             });
     });
 });
