@@ -1,5 +1,5 @@
 const { fetchTopics, fetchArticles, fetchArticleByID, fetchComments, checkExists, 
-    sendNewComment, updateArticleByID, deleteComment, checkCommentExists } = require("../models/model.js")
+    sendNewComment, updateArticleByID, deleteComment, checkCommentExists, fetchUsers } = require("../models/model.js")
 
 const fs = require("fs/promises")
 
@@ -20,9 +20,9 @@ exports.getTopics = (req, res, next) => {
     fetchTopics().then((topics) => {
         res.status(200).send({ topics })
     })
-        .catch((err) => {
-            next(err)
-        })
+    .catch((err) => {
+        next(err)
+    })
 }
 
 exports.getArticleByID = (req, res, next) => {
@@ -30,18 +30,18 @@ exports.getArticleByID = (req, res, next) => {
     fetchArticleByID(article_id).then((article) => {
         res.status(200).send({ article })
     })
-        .catch((err) => {
-            next(err)
-        })
+    .catch((err) => {
+        next(err)
+    })
 }
 
 exports.getArticles = (req, res, next) => {
     fetchArticles().then((articles) => {
         res.status(200).send({ articles })
     })
-        .catch((err) => {
-            next(err)
-        })
+    .catch((err) => {
+        next(err)
+    })
 }
 
 exports.getComments = (req, res, next) => {
@@ -97,6 +97,15 @@ exports.deleteCommentByID = (req, res, next) => {
     .then(() => {
         res.status(204).end()
     }).catch((err) => {
+        next(err)
+    })
+}
+
+exports.getUsers = (req, res, next) => {
+    fetchUsers().then((users) => {
+        res.status(200).send({ users })
+    })
+    .catch((err) => {
         next(err)
     })
 }

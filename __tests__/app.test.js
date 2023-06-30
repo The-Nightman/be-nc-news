@@ -38,6 +38,11 @@ describe("get /api", () => {
                 expect(body.apiDoc).hasOwnProperty("GET /api/topics");
                 expect(body.apiDoc).hasOwnProperty("GET /api/articles");
                 expect(body.apiDoc).hasOwnProperty("GET /api/articles/:article_id");
+                expect(body.apiDoc).hasOwnProperty("GET /api/articles/:article_id/comments");
+                expect(body.apiDoc).hasOwnProperty("POST /api/articles/:article_id/comments");
+                expect(body.apiDoc).hasOwnProperty("PATCH /api/articles/:article_id");
+                expect(body.apiDoc).hasOwnProperty("DELETE /api/comments/:comment_id");
+                expect(body.apiDoc).hasOwnProperty("GET /api/users");
                 for (let i in body.apiDoc) {
                     expect(body.apiDoc[i]).hasOwnProperty("description");
                 };
@@ -100,7 +105,7 @@ describe("get /api/articles", () => {
                     expect(typeof article.comment_count).toBe('number');
                     expect(article).not.hasOwnProperty('body');
                 });
-                
+
             });
     });
     test("return an array of article objects sorted by date descending as default", () => {
@@ -108,7 +113,7 @@ describe("get /api/articles", () => {
             .get("/api/articles")
             .expect(200)
             .then(({ body }) => {
-                expect(body.articles).toBeSortedBy('created_at', {descending: true})
+                expect(body.articles).toBeSortedBy('created_at', { descending: true })
             });
     });
 });
@@ -159,8 +164,10 @@ describe("get /api/articles/:article_id/comments", () => {
 
 describe("post /api/articles/:article_id/comments", () => {
     test("posts and returns a new comment to the selected article", () => {
-        const testComment = { body: "test comment content",
-            author: "lurker" }
+        const testComment = {
+            body: "test comment content",
+            author: "lurker"
+        }
         return request(app)
             .post("/api/articles/1/comments")
             .send(testComment)
@@ -175,8 +182,10 @@ describe("post /api/articles/:article_id/comments", () => {
             });
     });
     test("returns an error 404 when a valid but non-existing article id is searched", () => {
-        const testComment = { body: "test comment content",
-        author: "lurker" }
+        const testComment = {
+            body: "test comment content",
+            author: "lurker"
+        }
         return request(app)
             .post("/api/articles/1162/comments")
             .send(testComment)
@@ -206,8 +215,10 @@ describe("post /api/articles/:article_id/comments", () => {
             });
     });
     test("returns an error 400 when an invalid search is performed", () => {
-        const testComment = { body: "test comment content",
-        author: "lurker" }
+        const testComment = {
+            body: "test comment content",
+            author: "lurker"
+        }
         return request(app)
             .post("/api/articles/bad/comments")
             .send(testComment)
@@ -217,8 +228,10 @@ describe("post /api/articles/:article_id/comments", () => {
             });
     });
     test("returns an error 404 when an invalid username is entered", () => {
-        const testComment = { body: "test comment content",
-        author: "keenan" }
+        const testComment = {
+            body: "test comment content",
+            author: "keenan"
+        }
         return request(app)
             .post("/api/articles/1/comments")
             .send(testComment)
@@ -231,7 +244,7 @@ describe("post /api/articles/:article_id/comments", () => {
 
 describe("patch /api/articles/:article_id", () => {
     test("updates the additive sum of the votes property of the chosen article by id", () => {
-        const test = { inc_votes : 1 }
+        const test = { inc_votes: 1 }
         return request(app)
             .patch("/api/articles/1")
             .send(test)
@@ -246,7 +259,7 @@ describe("patch /api/articles/:article_id", () => {
             });
     });
     test("updates the subractive sum of the votes property of the chosen article by id", () => {
-        const test = { inc_votes : -7 }
+        const test = { inc_votes: -7 }
         return request(app)
             .patch("/api/articles/1")
             .send(test)
@@ -261,7 +274,7 @@ describe("patch /api/articles/:article_id", () => {
             });
     });
     test("updates the article from valid keys while ignoring invalid keys", () => {
-        const test = { inc_votes : 1, invalid: "false" }
+        const test = { inc_votes: 1, invalid: "false" }
         return request(app)
             .patch("/api/articles/1")
             .send(test)
@@ -276,7 +289,7 @@ describe("patch /api/articles/:article_id", () => {
             });
     });
     test("returns an error 404 when a valid but non-existing article id is searched", () => {
-        const test = { inc_votes : 1 }
+        const test = { inc_votes: 1 }
         return request(app)
             .patch("/api/articles/1232")
             .send(test)
@@ -286,7 +299,7 @@ describe("patch /api/articles/:article_id", () => {
             });
     });
     test("returns an error 400 on attempt to update an article with an invalid key", () => {
-        const test = { comment_count : 1 }
+        const test = { comment_count: 1 }
         return request(app)
             .patch("/api/articles/1")
             .send(test)
@@ -296,7 +309,7 @@ describe("patch /api/articles/:article_id", () => {
             });
     });
     test("returns an error 400 when an invalid search is performed", () => {
-        const test = { comment_count : 1 }
+        const test = { comment_count: 1 }
         return request(app)
             .patch("/api/articles/bad")
             .send(test)
@@ -306,7 +319,7 @@ describe("patch /api/articles/:article_id", () => {
             });
     });
     test("returns an error 400 when an invalid update query is passed with a valid key", () => {
-        const test = { inc_votes : "bad" }
+        const test = { inc_votes: "bad" }
         return request(app)
             .patch("/api/articles/1")
             .send(test)
@@ -324,7 +337,7 @@ describe("delete /api/comments/:comment_id", () => {
             .expect(204)
             .then(({ body }) => {
                 expect(body).toEqual({});
-                
+
             });
     });
     test("returns status 404 when given a valid but non-existing comment id", () => {
@@ -333,7 +346,7 @@ describe("delete /api/comments/:comment_id", () => {
             .expect(404)
             .then(({ body }) => {
                 expect(body.message).toBe('Comment does not exist!');
-                
+
             });
     });
     test("returns status 400 when given an invalid search is performed", () => {
@@ -342,7 +355,23 @@ describe("delete /api/comments/:comment_id", () => {
             .expect(400)
             .then(({ body }) => {
                 expect(body.message).toBe('Bad request! Enter a valid ID');
-                
+
+            });
+    });
+});
+
+describe("get /api/users", () => {
+    test("returns an array of user objects each containing username, name and avatar url properties", () => {
+        return request(app)
+            .get("/api/users")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.users).toHaveLength(4);
+                body.users.forEach(user => {
+                    expect(typeof user.username).toBe("string");
+                    expect(typeof user.name).toBe("string");
+                    expect(typeof user.avatar_url).toBe("string");
+                });
             });
     });
 });

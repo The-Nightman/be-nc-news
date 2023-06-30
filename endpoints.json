@@ -115,5 +115,21 @@
     "exampleResponse": {
       "body": {}
     }
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [{
+        "username": "butter_bridge",
+        "name": "jonny",
+        "avatar_url": "https://url"
+      },
+      {
+        "username": "icellusedkars",
+        "name": "sam",
+        "avatar_url": "https://url"
+      }]
+    }
   }
 }
