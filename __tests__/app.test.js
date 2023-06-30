@@ -38,6 +38,11 @@ describe("get /api", () => {
                 expect(body.apiDoc).hasOwnProperty("GET /api/topics");
                 expect(body.apiDoc).hasOwnProperty("GET /api/articles");
                 expect(body.apiDoc).hasOwnProperty("GET /api/articles/:article_id");
+                expect(body.apiDoc).hasOwnProperty("GET /api/articles/:article_id/comments");
+                expect(body.apiDoc).hasOwnProperty("POST /api/articles/:article_id/comments");
+                expect(body.apiDoc).hasOwnProperty("PATCH /api/articles/:article_id");
+                expect(body.apiDoc).hasOwnProperty("DELETE /api/comments/:comment_id");
+                expect(body.apiDoc).hasOwnProperty("GET /api/users");
                 for (let i in body.apiDoc) {
                     expect(body.apiDoc[i]).hasOwnProperty("description");
                 };
