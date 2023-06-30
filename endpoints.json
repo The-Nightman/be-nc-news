@@ -108,5 +108,12 @@
         }
       ]
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes existing comments by id",
+    "queries": [],
+    "exampleResponse": {
+      "body": {}
+    }
   }
 }
