@@ -1,5 +1,5 @@
 const { fetchTopics, fetchArticles, fetchArticleByID, fetchComments, checkExists, 
-    sendNewComment, updateArticleByID } = require("../models/model.js")
+    sendNewComment, updateArticleByID, deleteComment, checkCommentExists } = require("../models/model.js")
 
 const fs = require("fs/promises")
 
@@ -88,4 +88,15 @@ exports.patchArticleByID = (req, res, next) => {
         next(err)
     })
 }
-    
+
+exports.deleteCommentByID = (req, res, next) => {
+    const { comment_id } = req.params
+    const existingComment = checkCommentExists(comment_id)
+    const deleteCommentFunc = deleteComment(comment_id)
+    return Promise.all([existingComment, deleteCommentFunc])
+    .then(() => {
+        res.status(204).end()
+    }).catch((err) => {
+        next(err)
+    })
+}
