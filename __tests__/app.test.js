@@ -52,22 +52,19 @@ describe("get /api", () => {
 
 describe("get /api/articles/:article_id", () => {
     test("returns an article object by id with appropriate content keys", () => {
-        const articleProps = ["author",
-            "title",
-            "body",
-            "topic",
-            "created_at",
-            "votes",
-            "article_img_url"]
         return request(app)
             .get("/api/articles/1")
             .expect(200)
             .then(({ body }) => {
-                expect(body.article).hasOwnProperty("article_id")
                 expect(body.article.article_id).toBe(1)
-                articleProps.forEach(prop => {
-                    expect(body.article).hasOwnProperty(prop);
-                })
+                expect(typeof body.article.author).toBe("string");
+                expect(typeof body.article.title).toBe("string");
+                expect(typeof body.article.body).toBe("string");
+                expect(typeof body.article.topic).toBe("string");
+                expect(typeof body.article.created_at).toBe("string");
+                expect(typeof body.article.votes).toBe("number");
+                expect(typeof body.article.article_img_url).toBe("string");
+                expect(typeof body.article.comment_count).toBe("number");
             });
     });
     test("returns a status 404 error message when a valid but non-existing article id is searched", () => {
