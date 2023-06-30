@@ -318,7 +318,7 @@ describe("patch /api/articles/:article_id", () => {
 });
 
 describe("delete /api/comments/:comment_id", () => {
-    test.only("returns status 204 without content and deletes comment by the given id when passed a valid id", () => {
+    test("returns status 204 without content and deletes comment by the given id when passed a valid id", () => {
         return request(app)
             .delete("/api/comments/1")
             .expect(204)
@@ -327,7 +327,7 @@ describe("delete /api/comments/:comment_id", () => {
                 
             });
     });
-    test.only("returns status 404 when given a valid but non-existing comment id", () => {
+    test("returns status 404 when given a valid but non-existing comment id", () => {
         return request(app)
             .delete("/api/comments/32")
             .expect(404)
@@ -336,7 +336,7 @@ describe("delete /api/comments/:comment_id", () => {
                 
             });
     });
-    test.only("returns status 400 when given an invalid search is performed", () => {
+    test("returns status 400 when given an invalid search is performed", () => {
         return request(app)
             .delete("/api/comments/bad")
             .expect(400)
