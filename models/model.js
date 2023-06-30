@@ -37,11 +37,7 @@ exports.fetchArticles = (sort_by = `created_at`, order = `DESC`, topic) => {
         articleQuery += ` GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order};`
         return db.query(articleQuery, topicQuery)
             .then((data) => {
-            if (data.rows.length === 0) {
-                return Promise.reject({ status: 204, message: 'No Content!' })
-            } else {
                 return data.rows
-            }
         });
     } else {
         return Promise.reject({status: 400, message: `Bad request! Enter a valid query`})

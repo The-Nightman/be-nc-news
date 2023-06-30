@@ -422,6 +422,14 @@ describe("get /api/articles/?sortby=&order=&topic=", () => {
                 expect(body.message).toBe("Topic does not exist!");
             });
     });
+    test("return an error 404 when filtered for a valid topic without articles", () => {
+        return request(app)
+            .get("/api/articles/?topic=paper")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toEqual([]);
+            });
+    });
     test("return an error 400 when an invalid and non-whitelisted sort_by query is entered", () => {
         return request(app)
             .get("/api/articles/?sort_by=attack")
